@@ -1,6 +1,13 @@
 import csv
 import cv2
 import numpy as np
+
+def loadImage(source_path):
+	filename = source_path.split('/')[-1]
+	current_path = './data/IMG/' + filename
+	image =cv2.imread(current_path)
+	return image
+
 lines = []
 with open('./data/driving_log.csv') as csvFile:
 	reader = csv.reader(csvFile)
@@ -10,19 +17,28 @@ lines.pop(0)
 images = []
 measurements = []
 for line in lines:
-	source_path = line[0]
-	filename = source_path.split('/')[-1]
-	current_path = './data/IMG/' + filename
-	image =cv2.imread(current_path)
-	images.append(image)
 	measurement = float(line[3])
+	correction = 0.25
+	#  Center Images
+	source_path = line[0]
+	images.append(loadImage(source_path))
 	measurements.append(measurement)
+
+	#  left Images
+	source_path = line[1]
+	images.append(loadImage(source_path))
+	measurements.append(measurement - correction)
+	
+	#  right Images
+	source_path = line[2]
+	images.append(loadImage(source_path))
+	measurements.append(measurement + correction)
 
 X_train = np.array(images,dtype = np.float32)
 y_train = np.array(measurements)
 
 from keras.models import Sequential
-from keras.layers import Flatten, Dense, Lambda, Cropping2D
+from keras.layers import Flatten, Dense, Lambda, Cropping2D, Dropout
 from keras.layers.convolutional import Convolution2D
 
 model = Sequential()
@@ -37,8 +53,11 @@ model.add(Convolution2D(48,5,5,activation="relu"))
 model.add(Convolution2D(64,5,5,activation="relu"))
 model.add(Convolution2D(64,5,5,activation="relu"))
 model.add(Flatten())
+model.add(Dropout(0.75))
 model.add(Dense(100))
+model.add(Dropout(0.75))
 model.add(Dense(50))
+model.add(Dropout(0.75))
 model.add(Dense(10))
 model.add(Dense(1))
 
