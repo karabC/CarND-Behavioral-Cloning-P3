@@ -18,7 +18,8 @@ images = []
 measurements = []
 for line in lines:
 	measurement = float(line[3])
-	correction = 0.25
+	left_correction = 0.23
+	right_correction = 0.265
 	#  Center Images
 	source_path = line[0]
 	images.append(loadImage(source_path))
@@ -27,12 +28,12 @@ for line in lines:
 	#  left Images
 	source_path = line[1]
 	images.append(loadImage(source_path))
-	measurements.append(measurement - correction)
+	measurements.append(measurement + left_correction)
 	
 	#  right Images
 	source_path = line[2]
 	images.append(loadImage(source_path))
-	measurements.append(measurement + correction)
+	measurements.append(measurement - right_correction)
 
 X_train = np.array(images,dtype = np.float32)
 y_train = np.array(measurements)
