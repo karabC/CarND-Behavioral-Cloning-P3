@@ -12,8 +12,8 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./cnn-architecture-624x890.png "Model Visualization"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
+[image2]: ./preprocessing.jpg "Preprocessing"
+[image3]: ./left_right_flipped.jpg "Recovery Image"
 [image4]: ./examples/placeholder_small.png "Recovery Image"
 [image5]: ./examples/placeholder_small.png "Recovery Image"
 [image6]: ./examples/placeholder_small.png "Normal Image"
@@ -75,7 +75,7 @@ My first step was to use a convolution neural network model similar to the NVIDI
 
 In order to gauge how well the model was working, I split my image into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. To avoid overfitting, i applied the max pooling and the droppout with the gridsearch approach. I come out with a low validation error model yet that still fail the simulatior run.
 
-To combat the overfitting, I decide to levearage the steering angle data. However, the correction is simlilar to the hyperparameter. It takes time to tune. Moreover, with more data, i decide to add one more Fully connected layer at the end part of CNN with 200 nodes. 
+To combat the overfitting, I decide to levearage the steering angle data. However, the correction is simlilar to the hyperparameter. It takes time to tune. Originally, i added one more Fully connected layer at the end part of CNN with 200 nodes. However, after reconstructed more data, i found this layer is no longer useful and might even resulted in overfit too.
 
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
 
@@ -94,8 +94,6 @@ Here is a visualization of the architecture
 |      RELU       |                                          |
 | Convolution 5x5 | 5x5 stride with 48 feature map |
 |      RELU       |                                          |
-| Fully connected |          Output:200 (Different with NVIDIA)          |
-|      RELU       |                                          |
 | Fully connected |          Output:100          |
 |      RELU       |                                          |
 | Fully connected |          Output:50          |
@@ -113,6 +111,12 @@ I originally created two laps of data by using keyboard. But it is found that th
 
 I decide to use the provided data solely then because i find it is difficult to play the game using mouse instead of keyboard.
 
-I finally randomly shuffled the data set and put 20% of the data into a validation set. 
+I finally randomly shuffled the data set and put 20% of the data into a validation set. There is a preprocessing step on chopping the data. see below
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 10 as evidenced by the coverage speed. I used an adam optimizer so that manually training the learning rate wasn't necessary.
+![alt text][image2]
+
+Moreover, I have also leverage the left/right camera with steering. I have also flipped the image horizontalling to make the steering more stable. See below
+
+![alt text][image3]
+
+I used this enriched training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 10 as evidenced by the coverage speed. I used an adam optimizer so that manually training the learning rate wasn't necessary.
